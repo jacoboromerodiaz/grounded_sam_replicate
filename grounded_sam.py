@@ -75,10 +75,11 @@ def draw_mask(mask, image, random_color=True):
 
 
 def run_grounding_sam(local_image_path, positive_prompt, negative_prompt, groundingdino_model, sam_predictor,
-                      adjustment_factor):
+                      adjustment_factor, threshold=0.3):
     image_source, image = load_image(local_image_path)
 
-    annotated_frame, detected_boxes = detect(image, image_source, positive_prompt, groundingdino_model)
+    annotated_frame, detected_boxes = detect(image, image_source, positive_prompt, groundingdino_model,
+                                             box_threshold=threshold)
 
     segmented_frame_masks = segment(image_source, sam_predictor, boxes=detected_boxes)
 
@@ -95,7 +96,8 @@ def run_grounding_sam(local_image_path, positive_prompt, negative_prompt, ground
 
     # If negative_prompt is defined and not empty, process negative mask
     if negative_prompt:
-        neg_annotated_frame, neg_detected_boxes = detect(image, image_source, negative_prompt, groundingdino_model)
+        neg_annotated_frame, neg_detected_boxes = detect(image, image_source, negative_prompt, groundingdino_model,
+                                                          box_threshold=threshold)
 
         neg_segmented_frame_masks = segment(image_source, sam_predictor, boxes=neg_detected_boxes)
 

@@ -69,6 +69,12 @@ class Predictor(BasePredictor):
                 description="Mask Adjustment Factor (-ve for erosion, +ve for dilation)",
                 default=0,
             ),
+            threshold: float = Input(
+                description="Confidence threshold for object detection (0.0–1.0). Detections below this score are discarded.",
+                default=0.3,
+                ge=0.0,
+                le=1.0,
+            ),
     ) -> Iterator[Path]:
         """Run a single prediction on the model"""
         predict_id = str(uuid.uuid4())
@@ -80,7 +86,8 @@ class Predictor(BasePredictor):
                                                                                                     negative_mask_prompt,
                                                                                                     self.groundingdino_model,
                                                                                                     self.sam_predictor,
-                                                                                                    adjustment_factor)
+                                                                                                    adjustment_factor,
+                                                                                                    threshold)
         print("Done!")
 
         variable_dict = {
